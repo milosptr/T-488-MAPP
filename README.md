@@ -116,12 +116,10 @@ MAPP/
 ├── app/                          # Expo Router screens and navigation
 │   ├── (tabs)/                   # Tab-based navigation screens
 │   │   ├── _layout.tsx          # Tab layout configuration
-│   │   ├── index.tsx            # First tab screen
-│   │   └── two.tsx              # Second tab screen
+│   │   ├── index.tsx            # Boards tab screen
+│   │   └── settings.tsx         # Settings tab screen
 │   ├── _layout.tsx              # Root layout
-│   ├── +html.tsx                # Custom HTML wrapper
-│   ├── +not-found.tsx           # 404 error screen
-│   └── modal.tsx                # Modal screen
+│   └── +not-found.tsx           # 404 error screen
 ├── assets/                       # Static assets (images, fonts)
 │   ├── fonts/                   # Custom fonts
 │   └── images/                  # App icons and images
