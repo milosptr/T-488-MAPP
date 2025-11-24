@@ -29,10 +29,9 @@ export default function RootLayout() {
     });
     const initializeStore = useStore(state => state.initializeStore);
 
-    // Initialize store on app load
     useEffect(() => {
         initializeStore();
-    }, [initializeStore]);
+    }, []);
 
     // Expo Router uses Error Boundaries to catch errors in the navigation tree.
     useEffect(() => {
@@ -59,6 +58,10 @@ function RootLayoutNav() {
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <Stack>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                    name="add-board"
+                    options={{ headerShown: false, presentation: 'modal' }}
+                />
             </Stack>
         </ThemeProvider>
     );

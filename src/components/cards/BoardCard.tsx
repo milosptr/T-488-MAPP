@@ -2,23 +2,29 @@ import { Text, View } from '@/src/components/Themed';
 import { useTheme } from '@/src/hooks/useTheme';
 import { useStore } from '@/src/store/useStore';
 import type { Board } from '@/src/types/data';
+import { GlassContainer, GlassView } from 'expo-glass-effect';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import React from 'react';
-import { Image, Pressable, StyleSheet, ViewStyle } from 'react-native';
+import { Image, Platform, Pressable, StyleSheet, ViewStyle } from 'react-native';
 
 interface BoardCardProps {
     board: Board;
     style?: ViewStyle;
-    onPress: () => void;
 }
 
-export function BoardCard({ board, style, onPress }: BoardCardProps) {
+export function BoardCard({ board, style }: BoardCardProps) {
     const theme = useTheme();
+    const router = useRouter();
     const getTasksByBoardId = useStore(state => state.getTasksByBoardId);
     const tasks = getTasksByBoardId(board.id);
 
+    const handlePress = () => {
+        router.push(`/single-board?id=${board.id}`);
+    };
+
     return (
-        <Pressable onPress={onPress}>
+        <Pressable onPress={handlePress}>
             {({ pressed }) => (
                 <View
                     style={[
@@ -39,11 +45,30 @@ export function BoardCard({ board, style, onPress }: BoardCardProps) {
                             end={{ x: 0, y: 0.6 }}
                             style={styles.gradient}
                         />
-                        <View style={styles.tasksContainer}>
-                            <Text style={[styles.tasks, { backgroundColor: theme.border }]}>
-                                {tasks.length} tasks
-                            </Text>
-                        </View>
+                        <GlassContainer style={styles.actionsContainer}>
+                            <GlassView
+                                glassEffectStyle="clear"
+                                style={[
+                                    styles.actionItem,
+                                    Platform.select({
+                                        android: { backgroundColor: theme.surface },
+                                        default: {},
+                                    }),
+                                ]}
+                            >
+                                <Text
+                                    style={[
+                                        styles.tasks,
+                                        Platform.select({
+                                            android: { color: theme.text },
+                                            default: { color: '#fff' },
+                                        }),
+                                    ]}
+                                >
+                                    {tasks.length} tasks
+                                </Text>
+                            </GlassView>
+                        </GlassContainer>
                     </View>
                     <View style={[styles.content, { backgroundColor: theme.surface }]}>
                         <Text style={styles.name}>{board.name}</Text>
@@ -83,10 +108,8 @@ const styles = StyleSheet.create({
         top: 16,
         right: 16,
     },
+
     tasks: {
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 12,
         fontSize: 12,
     },
     gradient: {
@@ -95,5 +118,21 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
+    },
+    actionsContainer: {
+        position: 'absolute',
+        top: 16,
+        right: 16,
+        gap: 8,
+        flexDirection: 'row',
+    },
+    actionItem: {
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
+    },
+    actionIcon: {
+        padding: 4,
+        borderRadius: 12,
     },
 });

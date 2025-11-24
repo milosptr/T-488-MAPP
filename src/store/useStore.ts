@@ -9,6 +9,7 @@ interface StoreState {
     initializeStore: () => void;
     resetStore: () => void;
     getTasksByBoardId: (boardId: number) => Task[];
+    addBoard: (board: Board) => void;
 }
 
 export const useStore = create<StoreState>((set, get) => ({
@@ -40,5 +41,9 @@ export const useStore = create<StoreState>((set, get) => ({
         const lists = get().lists.filter(list => list.boardId === boardId);
         const listIds = new Set(lists.map(list => list.id));
         return get().tasks.filter(task => listIds.has(task.listId));
+    },
+
+    addBoard: (board: Board) => {
+        set({ boards: [...get().boards, board] });
     },
 }));
