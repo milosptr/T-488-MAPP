@@ -6,6 +6,7 @@ import { Text, View } from '../Themed';
 
 type Props = {
     size?: 'small' | 'medium' | 'large';
+    variant?: 'default' | 'outlined' | 'danger' | 'success';
     title: string;
     leadingIcon?: ReactNode;
     trailingIcon?: ReactNode;
@@ -30,8 +31,9 @@ const sizes = {
     },
 };
 
-export const LiquidButton = ({
+export const Button = ({
     size = 'medium',
+    variant = 'default',
     title,
     leadingIcon,
     trailingIcon,
@@ -39,12 +41,48 @@ export const LiquidButton = ({
 }: Props) => {
     const theme = useTheme();
     const sizeStyles = sizes[size];
+
+    const getVariantStyles = () => {
+        switch (variant) {
+            case 'outlined':
+                return {
+                    backgroundColor: 'transparent',
+                    borderWidth: 1,
+                    borderColor: theme.button,
+                };
+            case 'danger':
+                return {
+                    backgroundColor: theme.error,
+                };
+            case 'success':
+                return {
+                    backgroundColor: theme.success,
+                };
+            default:
+                return {
+                    backgroundColor: theme.button,
+                };
+        }
+    };
+
+    const getTextColor = () => {
+        switch (variant) {
+            case 'outlined':
+                return theme.button;
+            case 'danger':
+            case 'success':
+                return '#fff';
+            default:
+                return theme.onButton;
+        }
+    };
+
     return (
         <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
-            <View style={[styles.container, { backgroundColor: theme.button, ...sizeStyles }]}>
+            <View style={[styles.container, getVariantStyles(), sizeStyles]}>
                 {leadingIcon}
                 <Text
-                    style={[styles.title, { color: theme.onButton, fontSize: sizeStyles.fontSize }]}
+                    style={[styles.title, { color: getTextColor(), fontSize: sizeStyles.fontSize }]}
                 >
                     {title}
                 </Text>

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
 import { data } from '../../data/data';
 import type { Board, List, Task } from '../types/data';
 
@@ -8,18 +9,18 @@ interface StoreState {
     tasks: Task[];
     initializeStore: () => void;
     resetStore: () => void;
-    getTasksByBoardId: (boardId: number) => Task[];
-    getListsByBoardId: (boardId: number) => List[];
-    getTasksByListId: (listId: number) => Task[];
+
+    addBoard: (board: Board) => void;
+    deleteBoard: (id: number) => void;
+
     updateTask: (updatedTask: Task) => void;
     moveTask: (taskId: number, toListId: number) => void;
-    addBoard: (board: Board) => void;
     addList: (list: List) => void;
     deleteList: (id: number) => void;
     updateList: (updatedList: List) => void;
 }
 
-export const useStore = create<StoreState>((set, get) => ({
+const useStoreBase = create<StoreState>((set, get) => ({
     boards: [],
     lists: [],
     tasks: [],
@@ -40,42 +41,25 @@ export const useStore = create<StoreState>((set, get) => ({
         });
     },
 
-    getTasksByBoardId: (boardId: number) => {
-        if (!boardId) {
-            return [];
-        }
-
-        const lists = get().lists.filter(list => list.boardId === boardId);
-        const listIds = new Set(lists.map(list => list.id));
-        return get().tasks.filter(task => listIds.has(task.listId));
-    },
-
-    getListsByBoardId: (boardId: number) => {
-        if (!boardId) return [];
-        return get().lists.filter(list => list.boardId === boardId);
-    },
-
-    getTasksByListId: (listId: number) => {
-        if (!listId) return [];
-        return get().tasks.filter(task => task.listId === listId);
-    },
-
     addBoard: (board: Board) => {
         set({ boards: [...get().boards, board] });
     },
+
+    deleteBoard: (id: number) => {
+        set({ boards: get().boards.filter(board => board.id !== id) });
+    },
+
     addList: (list: List) => {
         set({ lists: [...get().lists, list] });
     },
-    
+
     deleteList: (id: number) => {
         set({ lists: get().lists.filter(list => list.id !== id) });
     },
 
     updateList: (updatedList: List) => {
         set({
-            lists: get().lists.map(list =>
-                list.id === updatedList.id ? updatedList : list
-            ),
+            lists: get().lists.map(list => (list.id === updatedList.id ? updatedList : list)),
         });
     },
     updateTask: (updatedTask: Task) => {
@@ -89,3 +73,9 @@ export const useStore = create<StoreState>((set, get) => ({
         });
     },
 }));
+
+export const useStore = useStoreBase;
+
+export function useShallowStore<T>(selector: (state: StoreState) => T): T {
+    return useStoreBase(useShallow(selector));
+}

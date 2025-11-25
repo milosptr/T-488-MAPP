@@ -2,7 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 
-import { LiquidButton } from '@/src/components/button';
+import { Button } from '@/src/components/button';
 import { TextInput } from '@/src/components/input';
 import { SafeAreaScreen } from '@/src/components/SafeAreaScreen';
 import { ScreenHeader } from '@/src/components/ScreenHeader';
@@ -102,13 +102,23 @@ export default function AddListScreen() {
                         returnKeyType="done"
                     />
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 8 }}>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 12,
+                            marginTop: 8,
+                        }}
+                    >
                         <View
                             style={{
                                 width: 36,
                                 height: 36,
                                 borderRadius: 8,
-                                backgroundColor: isColorValid && normalizedColor ? normalizedColor : theme.surface,
+                                backgroundColor:
+                                    isColorValid && normalizedColor
+                                        ? normalizedColor
+                                        : theme.surface,
                                 borderWidth: 1,
                                 borderColor: isColorValid ? theme.border : theme.error,
                             }}
@@ -119,7 +129,7 @@ export default function AddListScreen() {
                     </View>
 
                     <View style={styles.buttonContainer}>
-                        <LiquidButton title="Add List" onPress={handleAdd} />
+                        <Button title="Add List" onPress={handleAdd} />
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>

@@ -1,4 +1,4 @@
-import { LiquidButton } from '@/src/components/button';
+import { Button } from '@/src/components/button';
 import { ListCard } from '@/src/components/cards/ListCard';
 import { SafeAreaScreen } from '@/src/components/SafeAreaScreen';
 import { ScreenHeader } from '@/src/components/ScreenHeader';
@@ -45,11 +45,15 @@ export default function SingleBoardScreen() {
                 <ScreenHeader
                     title={board.name}
                     rightAction={() => (
-                        <LiquidButton
+                        <Button
                             size="small"
                             title="Add List"
                             leadingIcon={
-                                <MaterialCommunityIcons name="plus" size={16} color={theme.onButton} />
+                                <MaterialCommunityIcons
+                                    name="plus"
+                                    size={16}
+                                    color={theme.onButton}
+                                />
                             }
                             onPress={() => router.push(`/add-list?boardId=${board.id}`)}
                         />

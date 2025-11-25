@@ -1,6 +1,6 @@
 import { ScrollView, StyleSheet } from 'react-native';
 
-import { LiquidButton } from '@/src/components/button';
+import { Button } from '@/src/components/button';
 import { BoardCard } from '@/src/components/cards/BoardCard';
 import { SafeAreaScreen } from '@/src/components/SafeAreaScreen';
 import { ScreenHeader } from '@/src/components/ScreenHeader';
@@ -25,7 +25,7 @@ export default function BoardsScreen() {
                 <ScreenHeader
                     title="Boards"
                     rightAction={() => (
-                        <LiquidButton
+                        <Button
                             size="small"
                             title="Add Board"
                             leadingIcon={

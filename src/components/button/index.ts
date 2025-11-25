@@ -1,1 +1,1 @@
-export * from './LiquidButton';
+export * from './Button';

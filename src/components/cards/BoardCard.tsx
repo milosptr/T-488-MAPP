@@ -1,82 +1,106 @@
 import { Text, View } from '@/src/components/Themed';
 import { useTheme } from '@/src/hooks/useTheme';
-import { useStore } from '@/src/store/useStore';
+import { useShallowStore } from '@/src/store/useStore';
 import type { Board } from '@/src/types/data';
-import { GlassContainer, GlassView } from 'expo-glass-effect';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import React from 'react';
-import { Image, Platform, Pressable, StyleSheet, ViewStyle } from 'react-native';
+import React, { useRef } from 'react';
+import { Image, Platform, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
+import { BoardBottomSheetModal } from '../BoardBottomSheetModal';
+import { GlassView } from '../GlassView';
+
+const PRESSED_OPACITY = 0.8;
+const GRADIENT_COLORS = ['rgba(0, 0, 0, 0.5)', 'transparent'] as const;
+const GRADIENT_START = { x: 0, y: 0 };
+const GRADIENT_END = { x: 0, y: 0.8 };
+const HIT_SLOP = 10;
+const ICON_SIZE = 20;
+const THUMBNAIL_HEIGHT = 200;
+const OPACITY_DESCRIPTION = 0.7;
 
 interface BoardCardProps {
     board: Board;
-    style?: ViewStyle;
 }
 
-export function BoardCard({ board, style }: BoardCardProps) {
+export function BoardCard({ board }: BoardCardProps) {
     const theme = useTheme();
     const router = useRouter();
-    const getTasksByBoardId = useStore(state => state.getTasksByBoardId);
-    const tasks = getTasksByBoardId(board.id);
+    const lists = useShallowStore(state => state.lists.filter(list => list.boardId === board.id));
+    const tasks = useShallowStore(state => {
+        const boardLists = state.lists.filter(list => list.boardId === board.id);
+        const listIds = new Set(boardLists.map(list => list.id));
+        return state.tasks.filter(task => listIds.has(task.listId));
+    });
+    const boardBottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+    const themedTextStyle = Platform.select({
+        android: { color: theme.text },
+        default: { color: '#fff' },
+    });
 
     const handlePress = () => {
         router.push(`/single-board?id=${board.id}`);
     };
 
+    const handleMorePress = () => {
+        boardBottomSheetModalRef.current?.present();
+    };
+
     return (
-        <Pressable onPress={handlePress}>
-            {({ pressed }) => (
-                <View
-                    style={[
-                        styles.card,
-                        style,
-                        { borderColor: theme.border, opacity: pressed ? 0.8 : 1 },
-                    ]}
-                >
-                    <View>
-                        <Image
-                            source={{ uri: board.thumbnailPhoto }}
-                            style={styles.thumbnail}
-                            resizeMode="cover"
-                        />
-                        <LinearGradient
-                            colors={['rgba(0, 0, 0, 0.5)', 'transparent']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 0, y: 0.6 }}
-                            style={styles.gradient}
-                        />
-                        <GlassContainer style={styles.actionsContainer}>
-                            <GlassView
-                                glassEffectStyle="clear"
-                                style={[
-                                    styles.actionItem,
-                                    Platform.select({
-                                        android: { backgroundColor: theme.surface },
-                                        default: {},
-                                    }),
-                                ]}
-                            >
-                                <Text
-                                    style={[
-                                        styles.tasks,
-                                        Platform.select({
-                                            android: { color: theme.text },
-                                            default: { color: '#fff' },
-                                        }),
-                                    ]}
-                                >
-                                    {tasks.length} tasks
-                                </Text>
-                            </GlassView>
-                        </GlassContainer>
+        <>
+            <Pressable onPress={handlePress} onLongPress={handleMorePress}>
+                {({ pressed }) => (
+                    <View
+                        style={[
+                            styles.card,
+                            { borderColor: theme.border, opacity: pressed ? PRESSED_OPACITY : 1 },
+                        ]}
+                    >
+                        <View>
+                            <Image
+                                source={{ uri: board.thumbnailPhoto }}
+                                style={styles.thumbnail}
+                                resizeMode="cover"
+                            />
+                            <LinearGradient
+                                colors={GRADIENT_COLORS}
+                                start={GRADIENT_START}
+                                end={GRADIENT_END}
+                                style={styles.gradient}
+                            />
+                            <View style={styles.actionsContainer}>
+                                <GlassView style={styles.actionItem}>
+                                    <Text style={[styles.tasks, themedTextStyle]}>
+                                        {lists.length} lists
+                                    </Text>
+                                </GlassView>
+                                <GlassView style={styles.actionItem}>
+                                    <Text style={[styles.tasks, themedTextStyle]}>
+                                        {tasks.length} tasks
+                                    </Text>
+                                </GlassView>
+                            </View>
+                        </View>
+                        <View style={[styles.content, { backgroundColor: theme.surface }]}>
+                            <View style={styles.contentInfo}>
+                                <Text style={styles.name}>{board.name}</Text>
+                                <Text style={styles.description}>{board.description}</Text>
+                            </View>
+                            <TouchableOpacity hitSlop={HIT_SLOP} onPress={handleMorePress}>
+                                <MaterialCommunityIcons
+                                    name="dots-vertical"
+                                    size={ICON_SIZE}
+                                    color={theme.text}
+                                />
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                    <View style={[styles.content, { backgroundColor: theme.surface }]}>
-                        <Text style={styles.name}>{board.name}</Text>
-                        <Text style={styles.description}>{board.description}</Text>
-                    </View>
-                </View>
-            )}
-        </Pressable>
+                )}
+            </Pressable>
+            <BoardBottomSheetModal ref={boardBottomSheetModalRef} boardId={board.id} />
+        </>
     );
 }
 
@@ -89,10 +113,13 @@ const styles = StyleSheet.create({
     },
     thumbnail: {
         width: '100%',
-        height: 200,
+        height: THUMBNAIL_HEIGHT,
     },
     content: {
         padding: 16,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
     },
     name: {
         fontSize: 18,
@@ -101,14 +128,13 @@ const styles = StyleSheet.create({
     },
     description: {
         fontSize: 14,
-        opacity: 0.7,
+        opacity: OPACITY_DESCRIPTION,
     },
     tasksContainer: {
         position: 'absolute',
         top: 16,
         right: 16,
     },
-
     tasks: {
         fontSize: 12,
     },
@@ -134,5 +160,9 @@ const styles = StyleSheet.create({
     actionIcon: {
         padding: 4,
         borderRadius: 12,
+    },
+    contentInfo: {
+        flex: 1,
+        flexShrink: 1,
     },
 });

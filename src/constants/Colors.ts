@@ -26,6 +26,12 @@ const grayColors = {
     950: '#181818',
 };
 
+const successColors = {
+    500: '#22c55e',
+    600: '#16a34a',
+    700: '#15803d',
+};
+
 export default {
     light: {
         text: '#000',
@@ -41,6 +47,8 @@ export default {
         onButton: '#fff',
         error: '#ef4444',
         errorLight: '#fca5a5',
+        success: successColors['500'],
+        successLight: '#86efac',
     },
     dark: {
         text: '#fff',
@@ -56,5 +64,7 @@ export default {
         onButton: '#111',
         error: '#f87171',
         errorLight: '#ef4444',
+        success: successColors['500'],
+        successLight: '#4ade80',
     },
 };

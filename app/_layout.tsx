@@ -3,15 +3,17 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/src/hooks/useColorScheme';
 import { useStore } from '@/src/store/useStore';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export {
     // Catch any errors thrown by the Layout component.
-    ErrorBoundary
+    ErrorBoundary,
 } from 'expo-router';
 
 export const unstable_settings = {
@@ -55,18 +57,22 @@ function RootLayoutNav() {
     const colorScheme = useColorScheme();
 
     return (
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen
-                    name="add-board"
-                    options={{ headerShown: false, presentation: 'modal' }}
-                />
-                <Stack.Screen
-                    name="add-list"
-                    options={{ headerShown: false, presentation: 'modal' }}
-                />
-            </Stack>
-        </ThemeProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <BottomSheetModalProvider>
+                <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                    <Stack>
+                        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                        <Stack.Screen
+                            name="add-board"
+                            options={{ headerShown: false, presentation: 'modal' }}
+                        />
+                        <Stack.Screen
+                            name="add-list"
+                            options={{ headerShown: false, presentation: 'modal' }}
+                        />
+                    </Stack>
+                </ThemeProvider>
+            </BottomSheetModalProvider>
+        </GestureHandlerRootView>
     );
 }

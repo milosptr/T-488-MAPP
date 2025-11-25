@@ -11,7 +11,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-import { LiquidButton } from '@/src/components/button';
+import { Button } from '@/src/components/button';
 import { TextInput } from '@/src/components/input';
 import { SafeAreaScreen } from '@/src/components/SafeAreaScreen';
 import { ScreenHeader } from '@/src/components/ScreenHeader';
@@ -211,7 +211,7 @@ export default function AddBoardScreen() {
                     </View>
 
                     <View style={styles.buttonContainer}>
-                        <LiquidButton title="Add Board" onPress={handleAddBoard} />
+                        <Button title="Add Board" onPress={handleAddBoard} />
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
