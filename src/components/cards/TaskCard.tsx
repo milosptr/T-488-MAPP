@@ -13,18 +13,14 @@ interface TaskCardProps {
     onToggleComplete: () => void;
 }
 
-export function TaskCard({
-    task,
-    listColor,
-    onToggleComplete,
-}: TaskCardProps) {
+export function TaskCard({ task, listColor, onToggleComplete }: TaskCardProps) {
     const theme = useTheme();
     const isCompleted = task.isFinished;
     const router = useRouter();
 
     return (
         <Pressable
-            onLongPress={() => router.push(`/modals/edit-task?id=${task.id}`)}
+            onPress={() => router.push(`/modals/edit-task?id=${task.id}`)}
             style={[
                 styles.card,
                 {
