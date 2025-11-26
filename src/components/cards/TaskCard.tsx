@@ -10,17 +10,13 @@ import { Pressable, StyleSheet } from 'react-native';
 interface TaskCardProps {
     task: Task;
     listColor?: string;
-    canMoveNext?: boolean;
     onToggleComplete: () => void;
-    onMoveToNext?: () => void;
 }
 
 export function TaskCard({
     task,
     listColor,
-    canMoveNext = false,
     onToggleComplete,
-    onMoveToNext,
 }: TaskCardProps) {
     const theme = useTheme();
     const isCompleted = task.isFinished;
@@ -92,24 +88,6 @@ export function TaskCard({
                         </Text>
                     ) : null}
                 </View>
-
-                {canMoveNext && onMoveToNext && (
-                    <Pressable
-                        onPress={onMoveToNext}
-                        style={({ pressed }) => [
-                            styles.moveButton,
-                            {
-                                backgroundColor: pressed ? theme.border : 'transparent',
-                            },
-                        ]}
-                    >
-                        <MaterialCommunityIcons
-                            name="chevron-right"
-                            size={20}
-                            color={theme.textMuted}
-                        />
-                    </Pressable>
-                )}
             </View>
         </Pressable>
     );
@@ -156,14 +134,5 @@ const styles = StyleSheet.create({
     taskDescription: {
         fontSize: 13,
         lineHeight: 18,
-    },
-    moveButton: {
-        width: 32,
-        height: 32,
-        borderRadius: borderRadius.sm,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: -4,
-        marginRight: -8,
     },
 });

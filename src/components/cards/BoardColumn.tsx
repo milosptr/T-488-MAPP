@@ -14,14 +14,12 @@ import { Pressable, ScrollView, StyleSheet } from 'react-native';
 interface BoardColumnProps {
     list: List;
     tasks: Task[];
-    nextList?: List;
 }
 
-export function BoardColumn({ list, tasks, nextList }: BoardColumnProps) {
+export function BoardColumn({ list, tasks }: BoardColumnProps) {
     const theme = useTheme();
     const router = useRouter();
     const updateTask = useStore(state => state.updateTask);
-    const moveTask = useStore(state => state.moveTask);
     const bottomSheetRef = useRef<BottomSheetModal>(null);
 
     const sortedTasks = useMemo(() => {
@@ -37,12 +35,6 @@ export function BoardColumn({ list, tasks, nextList }: BoardColumnProps) {
 
     const handleToggleComplete = (task: Task) => {
         updateTask({ ...task, isFinished: !task.isFinished });
-    };
-
-    const handleMoveToNext = (taskId: number) => {
-        if (nextList) {
-            moveTask(taskId, nextList.id);
-        }
     };
 
     const handleOpenMenu = useCallback(() => {
@@ -141,9 +133,7 @@ export function BoardColumn({ list, tasks, nextList }: BoardColumnProps) {
                             key={task.id}
                             task={task}
                             listColor={list.color}
-                            canMoveNext={!!nextList}
                             onToggleComplete={() => handleToggleComplete(task)}
-                            onMoveToNext={() => handleMoveToNext(task.id)}
                         />
                     ))}
 

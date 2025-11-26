@@ -75,16 +75,8 @@ export default function SingleBoardScreen() {
                 >
                     {lists.map((list, index) => {
                         const tasks = allTasks.filter(t => t.listId === list.id);
-                        const nextList = lists[index + 1];
 
-                        return (
-                            <BoardColumn
-                                key={list.id}
-                                list={list}
-                                tasks={tasks}
-                                nextList={nextList}
-                            />
-                        );
+                        return <BoardColumn key={list.id} list={list} tasks={tasks} />;
                     })}
                 </ScrollView>
             </View>
