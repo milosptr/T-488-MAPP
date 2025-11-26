@@ -13,7 +13,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export {
     // Catch any errors thrown by the Layout component.
-    ErrorBoundary,
+    ErrorBoundary
 } from 'expo-router';
 
 export const unstable_settings = {
@@ -69,6 +69,10 @@ function RootLayoutNav() {
                         />
                         <Stack.Screen name="modals/add-list" options={{ presentation: 'modal' }} />
                         <Stack.Screen name="modals/add-task" options={{ presentation: 'modal' }} />
+                        <Stack.Screen
+                            name="modals/edit-task"
+                            options={{ presentation: 'modal' }}
+                        />
                         <Stack.Screen name="+not-found" />
                     </Stack>
                 </ThemeProvider>
