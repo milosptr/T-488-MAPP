@@ -30,6 +30,11 @@ export const BoardBottomSheetModal = ({ ref, boardId }: Props) => {
         router.push(`/add-list?boardId=${boardId}`);
     };
 
+    const handleEditBoard = () => {
+        ref.current?.close();
+        router.push(`/edit-board?id=${boardId}`);
+    };
+
     const handleDeleteBoard = () => {
         ref.current?.close();
         Alert.alert('Delete Board', 'Are you sure you want to delete this board?', [
@@ -59,8 +64,10 @@ export const BoardBottomSheetModal = ({ ref, boardId }: Props) => {
             <BottomSheetView style={[styles.contentContainer, { paddingBottom: bottom }]}>
                 <View style={styles.actionsContainer}>
                     <Button title="View Board" onPress={handleViewBoard} />
-                    <Button title="Add List to Board" onPress={handleAddListToBoard} />
+                    <Button title="Edit Board" onPress={handleEditBoard} />
                     <Button variant="danger" title="Delete Board" onPress={handleDeleteBoard} />
+                    <View style={[styles.separator, { backgroundColor: theme.colors.border }]} />
+                    <Button title="Add List to Board" onPress={handleAddListToBoard} />
                     <View style={[styles.separator, { backgroundColor: theme.colors.border }]} />
                     <Button variant="outlined" title="Close" onPress={handleClose} />
                 </View>

@@ -11,6 +11,7 @@ interface StoreState {
     resetStore: () => void;
 
     addBoard: (board: Board) => void;
+    updateBoard: (updatedBoard: Board) => void;
     deleteBoard: (id: number) => void;
 
     updateTask: (updatedTask: Task) => void;
@@ -43,6 +44,14 @@ const useStoreBase = create<StoreState>((set, get) => ({
 
     addBoard: (board: Board) => {
         set({ boards: [...get().boards, board] });
+    },
+
+    updateBoard: (updatedBoard: Board) => {
+        set({
+            boards: get().boards.map(board =>
+                board.id === updatedBoard.id ? updatedBoard : board
+            ),
+        });
     },
 
     deleteBoard: (id: number) => {

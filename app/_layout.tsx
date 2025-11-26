@@ -70,6 +70,10 @@ function RootLayoutNav() {
                             name="add-list"
                             options={{ headerShown: false, presentation: 'modal' }}
                         />
+                        <Stack.Screen
+                            name="edit-board"
+                            options={{ headerShown: false, presentation: 'modal' }}
+                        />
                     </Stack>
                 </ThemeProvider>
             </BottomSheetModalProvider>
