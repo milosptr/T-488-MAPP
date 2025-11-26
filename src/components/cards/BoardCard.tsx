@@ -41,7 +41,7 @@ export function BoardCard({ board }: BoardCardProps) {
     });
 
     const handlePress = () => {
-        router.push(`/single-board?id=${board.id}`);
+        router.push(`/boards/${board.id}`);
     };
 
     const handleMorePress = () => {

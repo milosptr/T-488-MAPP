@@ -16,7 +16,10 @@ export function ListCard({ list, onPress }: ListCardProps) {
     const theme = useTheme();
     const deleteList = useStore(state => state.deleteList);
     const allTasks = useStore(state => state.tasks);
-    const tasks = React.useMemo(() => allTasks.filter(t => t.listId === list.id), [allTasks, list.id]);
+    const tasks = React.useMemo(
+        () => allTasks.filter(t => t.listId === list.id),
+        [allTasks, list.id]
+    );
     const router = useRouter();
 
     const handleDelete = () => {
@@ -25,22 +28,20 @@ export function ListCard({ list, onPress }: ListCardProps) {
 
     const handlePress = () => {
         if (onPress) return onPress();
-        router.push(`/single-list?id=${list.id}`);
+        router.push(`/lists/${list.id}`);
     };
 
     return (
-        <View
-            style={[
-                styles.card,
-                { borderColor: theme.border },
-            ]}
-        >
+        <View style={[styles.card, { borderColor: theme.border }]}>
             <View style={styles.row}>
                 <Pressable onPress={handlePress} style={styles.pressArea}>
                     {({ pressed }) => (
                         <View style={[styles.innerPress, { opacity: pressed ? 0.9 : 1 }]}>
                             <View
-                                style={[styles.swatch, { backgroundColor: list.color || theme.tint }]}
+                                style={[
+                                    styles.swatch,
+                                    { backgroundColor: list.color || theme.tint },
+                                ]}
                             />
 
                             <Text style={styles.name}>{list.name}</Text>

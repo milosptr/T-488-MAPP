@@ -63,7 +63,7 @@ export default function SingleBoardScreen() {
                                     color={theme.onButton}
                                 />
                             }
-                            onPress={() => router.push(`/add-list?boardId=${board.id}`)}
+                            onPress={() => router.push(`/modals/add-list?boardId=${board.id}`)}
                         />
                     )}
                 />

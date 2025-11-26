@@ -16,7 +16,7 @@ export default function BoardsScreen() {
     const router = useRouter();
 
     const handleAddBoard = () => {
-        router.push('/add-board');
+        router.push('/modals/add-board');
     };
 
     return (

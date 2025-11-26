@@ -22,17 +22,17 @@ export const BoardBottomSheetModal = ({ ref, boardId }: Props) => {
 
     const handleViewBoard = () => {
         ref.current?.close();
-        router.push(`/single-board?id=${boardId}`);
+        router.push(`/boards/${boardId}`);
     };
 
     const handleAddListToBoard = () => {
         ref.current?.close();
-        router.push(`/add-list?boardId=${boardId}`);
+        router.push(`/modals/add-list?boardId=${boardId}`);
     };
 
     const handleEditBoard = () => {
         ref.current?.close();
-        router.push(`/edit-board?id=${boardId}`);
+        router.push(`/modals/edit-board?id=${boardId}`);
     };
 
     const handleDeleteBoard = () => {
