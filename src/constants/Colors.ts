@@ -33,7 +33,7 @@ export default {
         onButton: palette.onButtonDark,
         error: palette.errorDark,
         success: palette.successDark,
-        headerBackground: palette.primaryDark,
+        headerBackground: palette.primary,
         white: palette.white,
     },
     dark: {

@@ -5,7 +5,7 @@ import { Text, View } from '@/src/components/Themed';
 import Colors from '@/src/constants/Colors';
 import { useTheme } from '@/src/hooks/useTheme';
 import { useStore } from '@/src/store/useStore';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Redirect, useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Pressable, ScrollView, StyleSheet } from 'react-native';
@@ -30,9 +30,20 @@ export default function SingleBoardScreen() {
     useEffect(() => {
         if (!!board) {
             navigation.setOptions({
+                headerLeft: () => (
+                    <Pressable style={styles.headerActionButton} onPress={() => router.back()}>
+                        <Feather
+                            name="chevron-left"
+                            size={16}
+                            color={theme.white}
+                            strokeWidth={2}
+                        />
+                        <Text style={styles.headerActionButtonText}>Back</Text>
+                    </Pressable>
+                ),
                 headerRight: () => (
                     <Pressable
-                        style={styles.addListButton}
+                        style={styles.headerActionButton}
                         onPress={() => router.push(`/modals/add-list?boardId=${board.id}`)}
                     >
                         <MaterialCommunityIcons
@@ -41,7 +52,7 @@ export default function SingleBoardScreen() {
                             color={theme.white}
                             strokeWidth={2}
                         />
-                        <Text style={styles.addListButtonText}>Add New List</Text>
+                        <Text style={styles.headerActionButtonText}>Add New List</Text>
                     </Pressable>
                 ),
             });
@@ -192,13 +203,13 @@ const styles = StyleSheet.create({
         flex: 1,
         gap: 24,
     },
-    addListButton: {
+    headerActionButton: {
         padding: 8,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 4,
     },
-    addListButtonText: {
+    headerActionButtonText: {
         fontSize: 14,
         fontWeight: '600',
         color: Colors.light.white,
