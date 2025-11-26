@@ -1,0 +1,99 @@
+import React from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+
+import { useTheme } from '../hooks/useTheme';
+import { Text } from './Themed';
+
+export const PRESET_COLORS = [
+    '#E53935',
+    '#FB8C00',
+    '#FDD835',
+    '#7CB342',
+    '#43A047',
+    '#00897B',
+    '#00ACC1',
+    '#29B6F6',
+    '#3949AB',
+    '#8E24AA',
+    '#D81B60',
+    '#F06292',
+];
+
+interface ColorPickerProps {
+    selectedColor: string;
+    onSelectColor: (color: string) => void;
+    label?: string;
+}
+
+export function ColorPicker({ selectedColor, onSelectColor, label = 'Color' }: ColorPickerProps) {
+    const theme = useTheme();
+
+    return (
+        <View style={styles.container}>
+            <Text style={[styles.label, { color: theme.text }]}>{label}</Text>
+            <View style={styles.grid}>
+                {PRESET_COLORS.map(color => {
+                    const isSelected = selectedColor.toUpperCase() === color.toUpperCase();
+                    return (
+                        <View key={color} style={styles.colorItem}>
+                            <Pressable
+                                onPress={() => onSelectColor(color)}
+                                style={[
+                                    styles.colorCircle,
+                                    { backgroundColor: color },
+                                    isSelected && { borderColor: theme.text },
+                                ]}
+                            >
+                                {isSelected && (
+                                    <View style={styles.checkmark}>
+                                        <Text style={styles.checkmarkText}>✓</Text>
+                                    </View>
+                                )}
+                            </Pressable>
+                        </View>
+                    );
+                })}
+            </View>
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        marginBottom: 16,
+    },
+    label: {
+        fontSize: 14,
+        fontWeight: '500',
+        marginBottom: 8,
+    },
+    grid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        rowGap: 12,
+    },
+    colorItem: {
+        width: '16.666%',
+        alignItems: 'center',
+    },
+    colorCircle: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    checkmark: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    checkmarkText: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+});

@@ -1,37 +1,23 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/src/components/button';
+import { ColorPicker, PRESET_COLORS } from '@/src/components/ColorPicker';
 import { TextInput } from '@/src/components/input';
 import { SafeAreaScreen } from '@/src/components/SafeAreaScreen';
 import { ScreenHeader } from '@/src/components/ScreenHeader';
-import { Text } from '@/src/components/Themed';
-import { useTheme } from '@/src/hooks/useTheme';
 import { useStore } from '@/src/store/useStore';
 
 export default function AddListScreen() {
-    const theme = useTheme();
     const router = useRouter();
     const { boardId } = useLocalSearchParams();
     const lists = useStore(state => state.lists);
     const addList = useStore(state => state.addList);
 
     const [name, setName] = useState('');
-    const [color, setColor] = useState('');
+    const [color, setColor] = useState(PRESET_COLORS[0]);
     const [nameError, setNameError] = useState('');
-    const [colorError, setColorError] = useState('');
-
-    const colorPattern = useMemo(() => /^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, []);
-    const normalizedColor = useMemo(() => {
-        if (!color) return '';
-        return color.startsWith('#') ? color : `#${color}`;
-    }, [color]);
-
-    const isColorValid = useMemo(() => {
-        if (!color) return true; // optional
-        return colorPattern.test(color) || colorPattern.test(normalizedColor);
-    }, [color, normalizedColor, colorPattern]);
 
     const handleAdd = useCallback(() => {
         if (!name.trim()) {
@@ -39,21 +25,16 @@ export default function AddListScreen() {
             return;
         }
 
-        if (color && !isColorValid) {
-            setColorError('Invalid hex color');
-            return;
-        }
-
         const newId = lists.length > 0 ? Math.max(...lists.map(l => l.id)) + 1 : 1;
         addList({
             id: newId,
             name: name.trim(),
-            color: normalizedColor || '#dddddd',
+            color: color || PRESET_COLORS[0],
             boardId: Number(boardId) || 0,
         });
 
         router.back();
-    }, [name, color, lists, addList, router, boardId, isColorValid, normalizedColor]);
+    }, [name, color, lists, addList, router, boardId]);
 
     return (
         <SafeAreaScreen edges={['bottom']} paddingTop={24}>
@@ -81,52 +62,7 @@ export default function AddListScreen() {
                         returnKeyType="next"
                     />
 
-                    <TextInput
-                        label="Color (hex, optional)"
-                        placeholder="#ff0000"
-                        value={color}
-                        onChangeText={text => {
-                            setColor(text);
-                            // live-validate
-                            if (!text) {
-                                setColorError('');
-                                return;
-                            }
-                            const norm = text.startsWith('#') ? text : `#${text}`;
-                            if (colorPattern.test(text) || colorPattern.test(norm)) {
-                                setColorError('');
-                            } else {
-                                setColorError('Invalid hex color');
-                            }
-                        }}
-                        returnKeyType="done"
-                    />
-
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: 12,
-                            marginTop: 8,
-                        }}
-                    >
-                        <View
-                            style={{
-                                width: 36,
-                                height: 36,
-                                borderRadius: 8,
-                                backgroundColor:
-                                    isColorValid && normalizedColor
-                                        ? normalizedColor
-                                        : theme.surface,
-                                borderWidth: 1,
-                                borderColor: isColorValid ? theme.border : theme.error,
-                            }}
-                        />
-                        {colorError ? (
-                            <Text style={{ color: theme.error }}>{colorError}</Text>
-                        ) : null}
-                    </View>
+                    <ColorPicker selectedColor={color} onSelectColor={setColor} />
 
                     <View style={styles.buttonContainer}>
                         <Button title="Add List" onPress={handleAdd} />
