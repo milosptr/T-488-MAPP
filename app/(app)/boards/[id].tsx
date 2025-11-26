@@ -8,7 +8,7 @@ import { useStore } from '@/src/store/useStore';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Redirect, useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
-import { Pressable, ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 
 export default function SingleBoardScreen() {
     const { id } = useLocalSearchParams();
@@ -101,10 +101,7 @@ export default function SingleBoardScreen() {
                                                         variant="outlined"
                                                         onPress={() => updateTask({ ...task, isFinished: !task.isFinished })}
                                                     />
-                                                    <Pressable
-                                                        style={styles.taskContent}
-                                                        onLongPress={() => router.push(`/modals/edit-task?id=${task.id}`)}
-                                                    >
+                                                    <View style={styles.taskContent}>
                                                         <Text style={[
                                                             styles.taskName,
                                                             {
@@ -125,7 +122,7 @@ export default function SingleBoardScreen() {
                                                         ]}>
                                                             {task.description}
                                                         </Text>
-                                                    </Pressable>
+                                                    </View>
                                                     <Button
                                                         size="small"
                                                         title=""
