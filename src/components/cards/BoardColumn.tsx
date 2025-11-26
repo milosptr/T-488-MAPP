@@ -1,0 +1,259 @@
+import { TaskCard } from '@/src/components/cards/TaskCard';
+import { EditListBottomSheetModal } from '@/src/components/EditListBottomSheetModal';
+import { Text, View } from '@/src/components/Themed';
+import { borderRadius, spacing } from '@/src/constants/DesignTokens';
+import { useTheme } from '@/src/hooks/useTheme';
+import { useStore } from '@/src/store/useStore';
+import type { List, Task } from '@/src/types/data';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useRouter } from 'expo-router';
+import React, { useCallback, useMemo, useRef } from 'react';
+import { Pressable, ScrollView, StyleSheet } from 'react-native';
+
+interface BoardColumnProps {
+    list: List;
+    tasks: Task[];
+    nextList?: List;
+}
+
+export function BoardColumn({ list, tasks, nextList }: BoardColumnProps) {
+    const theme = useTheme();
+    const router = useRouter();
+    const updateTask = useStore(state => state.updateTask);
+    const moveTask = useStore(state => state.moveTask);
+    const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+    const sortedTasks = useMemo(() => {
+        return [...tasks].sort((a, b) => {
+            if (a.isFinished === b.isFinished) return 0;
+            return a.isFinished ? 1 : -1;
+        });
+    }, [tasks]);
+
+    const completedCount = tasks.filter(t => t.isFinished).length;
+    const totalCount = tasks.length;
+    const progressPercent = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+
+    const handleToggleComplete = (task: Task) => {
+        updateTask({ ...task, isFinished: !task.isFinished });
+    };
+
+    const handleMoveToNext = (taskId: number) => {
+        if (nextList) {
+            moveTask(taskId, nextList.id);
+        }
+    };
+
+    const handleOpenMenu = useCallback(() => {
+        bottomSheetRef.current?.present();
+    }, []);
+
+    const handleAddTask = useCallback(() => {
+        router.push(`/modals/add-task?listId=${list.id}`);
+    }, [router, list.id]);
+
+    return (
+        <>
+            <View
+                style={[
+                    styles.column,
+                    {
+                        backgroundColor: `${theme.surface}f8`,
+                        borderColor: theme.border,
+                    },
+                ]}
+            >
+                <View style={styles.header}>
+                    <View
+                        style={[styles.colorDot, { backgroundColor: list.color || theme.tint }]}
+                    />
+                    <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>
+                        {list.name}
+                    </Text>
+                    <View style={styles.headerRight}>
+                        <View
+                            style={[
+                                styles.countBadge,
+                                { backgroundColor: `${list.color || theme.tint}20` },
+                            ]}
+                        >
+                            <Text style={[styles.countText, { color: list.color || theme.tint }]}>
+                                {totalCount}
+                            </Text>
+                        </View>
+                        <Pressable
+                            onPress={handleOpenMenu}
+                            style={({ pressed }) => [
+                                styles.moreButton,
+                                { opacity: pressed ? 0.6 : 1 },
+                            ]}
+                        >
+                            <MaterialCommunityIcons
+                                name="dots-vertical"
+                                size={20}
+                                color={theme.textMuted}
+                            />
+                        </Pressable>
+                    </View>
+                </View>
+
+                {totalCount > 0 && (
+                    <View style={styles.progressContainer}>
+                        <View style={[styles.progressTrack, { backgroundColor: theme.border }]}>
+                            <View
+                                style={[
+                                    styles.progressFill,
+                                    {
+                                        backgroundColor: list.color || theme.tint,
+                                        width: `${progressPercent}%`,
+                                    },
+                                ]}
+                            />
+                        </View>
+                        <Text style={[styles.progressText, { color: theme.textMuted }]}>
+                            {completedCount}/{totalCount} done
+                        </Text>
+                    </View>
+                )}
+
+                <Pressable
+                    onPress={handleAddTask}
+                    style={({ pressed }) => [
+                        styles.addTaskButton,
+                        {
+                            borderColor: theme.border,
+                            backgroundColor: pressed ? `${theme.border}40` : 'transparent',
+                        },
+                    ]}
+                >
+                    <MaterialCommunityIcons name="plus" size={18} color={theme.textMuted} />
+                    <Text style={[styles.addTaskText, { color: theme.textMuted }]}>Add Task</Text>
+                </Pressable>
+
+                <ScrollView
+                    style={styles.tasksList}
+                    showsVerticalScrollIndicator={false}
+                    nestedScrollEnabled
+                >
+                    {sortedTasks.map(task => (
+                        <TaskCard
+                            key={task.id}
+                            task={task}
+                            listColor={list.color}
+                            canMoveNext={!!nextList}
+                            onToggleComplete={() => handleToggleComplete(task)}
+                            onMoveToNext={() => handleMoveToNext(task.id)}
+                        />
+                    ))}
+
+                    {totalCount === 0 && (
+                        <View style={styles.emptyState}>
+                            <MaterialCommunityIcons
+                                name="clipboard-text-outline"
+                                size={32}
+                                color={theme.textMuted}
+                            />
+                            <Text style={[styles.emptyText, { color: theme.textMuted }]}>
+                                No tasks yet
+                            </Text>
+                        </View>
+                    )}
+                </ScrollView>
+            </View>
+
+            <EditListBottomSheetModal ref={bottomSheetRef} listId={list.id} />
+        </>
+    );
+}
+
+const styles = StyleSheet.create({
+    column: {
+        width: 300,
+        borderWidth: 1,
+        borderRadius: borderRadius.lg,
+        padding: spacing.md,
+        marginRight: spacing.md,
+        maxHeight: '100%',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: spacing.sm,
+        marginBottom: spacing.md,
+    },
+    colorDot: {
+        width: 12,
+        height: 12,
+        borderRadius: 6,
+    },
+    headerTitle: {
+        fontSize: 17,
+        fontWeight: '700',
+        flex: 1,
+    },
+    headerRight: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: spacing.xs,
+    },
+    countBadge: {
+        paddingHorizontal: spacing.sm,
+        paddingVertical: spacing.xs,
+        borderRadius: borderRadius.sm,
+    },
+    countText: {
+        fontSize: 13,
+        fontWeight: '600',
+    },
+    moreButton: {
+        padding: spacing.xs,
+    },
+    progressContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: spacing.sm,
+        marginBottom: spacing.md,
+    },
+    progressTrack: {
+        flex: 1,
+        height: 4,
+        borderRadius: 2,
+        overflow: 'hidden',
+    },
+    progressFill: {
+        height: '100%',
+        borderRadius: 2,
+    },
+    progressText: {
+        fontSize: 11,
+        fontWeight: '500',
+    },
+    addTaskButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: spacing.xs,
+        paddingVertical: spacing.sm,
+        borderWidth: 1,
+        borderStyle: 'dashed',
+        borderRadius: borderRadius.sm,
+        marginBottom: spacing.md,
+    },
+    addTaskText: {
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    tasksList: {
+        flex: 1,
+    },
+    emptyState: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: spacing.xxl,
+        gap: spacing.sm,
+    },
+    emptyText: {
+        fontSize: 14,
+    },
+});

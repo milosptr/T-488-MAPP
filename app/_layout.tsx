@@ -69,6 +69,8 @@ function RootLayoutNav() {
                         />
                         <Stack.Screen name="modals/add-list" options={{ presentation: 'modal' }} />
                         <Stack.Screen name="modals/add-task" options={{ presentation: 'modal' }} />
+                        <Stack.Screen name="modals/edit-task" options={{ presentation: 'modal' }} />
+                        <Stack.Screen name="modals/edit-list" options={{ presentation: 'modal' }} />
                         <Stack.Screen name="+not-found" />
                     </Stack>
                 </ThemeProvider>
