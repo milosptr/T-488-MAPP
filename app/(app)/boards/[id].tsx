@@ -1,6 +1,5 @@
 import { Button } from '@/src/components/button';
 import { ListCard } from '@/src/components/cards/ListCard';
-import AddTaskModal from '@/src/components/input/AddTaskModal';
 import { SafeAreaScreen } from '@/src/components/SafeAreaScreen';
 import { ScreenHeader } from '@/src/components/ScreenHeader';
 import { Text, View } from '@/src/components/Themed';
@@ -8,7 +7,7 @@ import { useTheme } from '@/src/hooks/useTheme';
 import { useStore } from '@/src/store/useStore';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Redirect, useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 export default function SingleBoardScreen() {
@@ -17,7 +16,6 @@ export default function SingleBoardScreen() {
     const board = useStore(state => state.boards.find(board => board.id === Number(id)));
     const allLists = useStore(state => state.lists);
     const allTasks = useStore(state => state.tasks);
-    const addTask = useStore(state => state.addTask);
     const moveTask = useStore(state => state.moveTask);
     const updateTask = useStore(state => state.updateTask);
 
@@ -28,8 +26,6 @@ export default function SingleBoardScreen() {
 
     const theme = useTheme();
     const router = useRouter();
-    const [modalVisible, setModalVisible] = useState(false);
-    const [activeListId, setActiveListId] = useState<number | null>(null);
 
     useEffect(() => {
         if (board && board.name.length > 0) {
@@ -84,19 +80,16 @@ export default function SingleBoardScreen() {
                                 <Button
                                     size="small"
                                     title="Add Task"
-                                    onPress={() => {
-                                        setActiveListId(list.id);
-                                        setModalVisible(true);
-                                    }}
+                                    onPress={() => router.push(`/modals/add-task?listId=${list.id}`)}
                                 />
 
                                 <View style={styles.tasksList}>
                                     {tasks.map(task => {
                                         const currentListIndex = lists.findIndex(l => l.id === list.id);
                                         const nextList = lists[currentListIndex + 1];
-                                        
+
                                         return (
-                                            <View key={task.id} style={[styles.taskCard, { borderColor: theme.border }]}> 
+                                            <View key={task.id} style={[styles.taskCard, { borderColor: theme.border }]}>
                                                 <View style={styles.taskRow}>
                                                     <Button
                                                         size="small"
@@ -113,8 +106,8 @@ export default function SingleBoardScreen() {
                                                     />
                                                     <View style={styles.taskContent}>
                                                         <Text style={[
-                                                            styles.taskName, 
-                                                            { 
+                                                            styles.taskName,
+                                                            {
                                                                 color: theme.text,
                                                                 textDecorationLine: task.isFinished ? 'line-through' : 'none',
                                                                 opacity: task.isFinished ? 0.6 : 1
@@ -123,8 +116,8 @@ export default function SingleBoardScreen() {
                                                             {task.name}
                                                         </Text>
                                                         <Text style={[
-                                                            styles.taskDesc, 
-                                                            { 
+                                                            styles.taskDesc,
+                                                            {
                                                                 color: theme.textMuted,
                                                                 textDecorationLine: task.isFinished ? 'line-through' : 'none',
                                                                 opacity: task.isFinished ? 0.6 : 1
@@ -157,16 +150,6 @@ export default function SingleBoardScreen() {
                     })}
                 </ScrollView>
 
-                <AddTaskModal
-                    visible={!!(modalVisible && activeListId)}
-                    onClose={() => setModalVisible(false)}
-                    onSubmit={(data) => {
-                        if (!activeListId) return;
-                        addTask(activeListId, data);
-                        setModalVisible(false);
-                        setActiveListId(null);
-                    }}
-                />
             </View>
         </SafeAreaScreen>
     );
