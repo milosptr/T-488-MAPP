@@ -1,13 +1,13 @@
 import { BoardColumn } from '@/src/components/cards';
 import { SafeAreaScreen } from '@/src/components/layout';
-import { Text, View } from '@/src/components/ui';
+import { Button, Text, View } from '@/src/components/ui';
 import Colors from '@/src/constants/Colors';
 import { useTheme } from '@/src/hooks/useTheme';
 import { useStore } from '@/src/store/useStore';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Redirect, useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import React, { useEffect, useMemo } from 'react';
-import { Pressable, ScrollView, StyleSheet } from 'react-native';
+import { Platform, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 
 export const SingleBoardScreen = () => {
     const { id } = useLocalSearchParams();
@@ -25,10 +25,14 @@ export const SingleBoardScreen = () => {
     const router = useRouter();
 
     useEffect(() => {
-        if (!!board) {
+        if (!!board && Platform.OS === 'ios') {
             navigation.setOptions({
                 headerLeft: () => (
-                    <Pressable style={styles.headerActionButton} onPress={() => router.back()}>
+                    <TouchableOpacity
+                        hitSlop={10}
+                        style={styles.headerActionButton}
+                        onPress={() => router.back()}
+                    >
                         <Feather
                             name="chevron-left"
                             size={16}
@@ -36,10 +40,10 @@ export const SingleBoardScreen = () => {
                             strokeWidth={2}
                         />
                         <Text style={styles.headerActionButtonText}>Back</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 ),
                 headerRight: () => (
-                    <Pressable
+                    <TouchableOpacity
                         style={styles.headerActionButton}
                         onPress={() => router.push(`/modals/add-list?boardId=${board.id}`)}
                     >
@@ -50,7 +54,7 @@ export const SingleBoardScreen = () => {
                             strokeWidth={2}
                         />
                         <Text style={styles.headerActionButtonText}>Add New List</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 ),
             });
         }
@@ -61,8 +65,41 @@ export const SingleBoardScreen = () => {
     }
 
     return (
-        <SafeAreaScreen edges={[]} paddingTop={24}>
+        <SafeAreaScreen
+            edges={Platform.OS === 'ios' ? [] : ['top']}
+            paddingTop={Platform.OS === 'android' ? 12 : 24}
+        >
             <View style={styles.container}>
+                {Platform.OS === 'android' && (
+                    <View style={styles.header}>
+                        <Button
+                            size="small"
+                            title="Back"
+                            onPress={() => router.back()}
+                            leadingIcon={
+                                <Feather
+                                    name="chevron-left"
+                                    size={16}
+                                    color={theme.white}
+                                    strokeWidth={2}
+                                />
+                            }
+                        />
+                        <Button
+                            size="small"
+                            title="Add New List"
+                            onPress={() => router.push(`/modals/add-list?boardId=${board.id}`)}
+                            leadingIcon={
+                                <MaterialCommunityIcons
+                                    name="plus"
+                                    size={16}
+                                    color={theme.white}
+                                    strokeWidth={2}
+                                />
+                            }
+                        />
+                    </View>
+                )}
                 <View>
                     <Text style={styles.boardTitle}>{board.name}</Text>
                     <Text style={styles.description}>{board.description}</Text>
@@ -88,6 +125,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         gap: 24,
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     headerActionButton: {
         padding: 8,

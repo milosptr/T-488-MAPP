@@ -11,10 +11,16 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-import { Button, ModalCloseButton, TextInput, Text, View } from '@/src/components/ui';
 import { SafeAreaScreen, ScreenHeader } from '@/src/components/layout';
+import { Button, ModalCloseButton, Text, TextInput, View } from '@/src/components/ui';
 import { useTheme } from '@/src/hooks/useTheme';
 import { useStore } from '@/src/store/useStore';
+import {
+    createListsFromTemplate,
+    getBoardTemplateById,
+    getBoardTemplates,
+    type BoardTemplate,
+} from '@/src/templates';
 
 interface FormErrors {
     name: string;
@@ -42,15 +48,81 @@ const IMAGE_PICKER_CONFIG: ImagePicker.ImagePickerOptions = {
     quality: 0.8,
 } as const;
 
+const templates = getBoardTemplates();
+
+interface TemplateCardProps {
+    template: BoardTemplate | null;
+    isSelected: boolean;
+    onSelect: () => void;
+}
+
+const TemplateCard = ({ template, isSelected, onSelect }: TemplateCardProps) => {
+    const theme = useTheme();
+
+    return (
+        <TouchableOpacity
+            onPress={onSelect}
+            style={[
+                styles.templateCard,
+                {
+                    backgroundColor: theme.surface,
+                    borderColor: isSelected ? theme.tint : theme.border,
+                    borderWidth: 1,
+                },
+            ]}
+            activeOpacity={0.7}
+        >
+            {template ? (
+                <>
+                    <Text style={[styles.templateName, { color: theme.text }]} numberOfLines={1}>
+                        {template.name}
+                    </Text>
+                    {template.description && (
+                        <Text
+                            style={[styles.templateDescription, { color: theme.textMuted }]}
+                            numberOfLines={2}
+                        >
+                            {template.description}
+                        </Text>
+                    )}
+                    <View style={styles.templateListsPreview}>
+                        {template.lists.slice(0, 4).map((list, index) => (
+                            <View
+                                key={index}
+                                style={[styles.listDot, { backgroundColor: list.color }]}
+                            />
+                        ))}
+                        {template.lists.length > 4 && (
+                            <Text style={[styles.moreListsText, { color: theme.textMuted }]}>
+                                +{template.lists.length - 4}
+                            </Text>
+                        )}
+                    </View>
+                </>
+            ) : (
+                <>
+                    <Text style={[styles.templateName, { color: theme.text }]}>None</Text>
+                    <Text style={[styles.templateDescription, { color: theme.textMuted }]}>
+                        Start from scratch
+                    </Text>
+                </>
+            )}
+        </TouchableOpacity>
+    );
+};
+
 export const AddBoardScreen = () => {
     const theme = useTheme();
     const router = useRouter();
     const boards = useStore(state => state.boards);
+    const lists = useStore(state => state.lists);
     const addBoard = useStore(state => state.addBoard);
+    const addList = useStore(state => state.addList);
 
     const [boardName, setBoardName] = useState('');
     const [boardDescription, setBoardDescription] = useState('');
     const [boardThumbnailPhoto, setBoardThumbnailPhoto] = useState('');
+    const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
     const [errors, setErrors] = useState<FormErrors>(INITIAL_ERRORS);
 
     const pickImage = useCallback(async () => {
@@ -83,6 +155,10 @@ export const AddBoardScreen = () => {
         }
     }, []);
 
+    const handleTemplateSelect = useCallback((templateId: string | null) => {
+        setSelectedTemplateId(templateId);
+    }, []);
+
     const validateForm = useCallback((): boolean => {
         const newErrors: FormErrors = { ...INITIAL_ERRORS };
         let isValid = true;
@@ -111,17 +187,46 @@ export const AddBoardScreen = () => {
             return;
         }
 
-        const newId = boards.length > 0 ? Math.max(...boards.map(b => b.id)) + 1 : 1;
+        // Generate new board ID
+        const newBoardId = boards.length > 0 ? Math.max(...boards.map(b => b.id)) + 1 : 1;
 
+        // Create the board
         addBoard({
-            id: newId,
+            id: newBoardId,
             name: boardName.trim(),
             description: boardDescription.trim(),
             thumbnailPhoto: boardThumbnailPhoto,
         });
 
-        router.back();
-    }, [validateForm, boards, addBoard, boardName, boardDescription, boardThumbnailPhoto, router]);
+        // If a template is selected, create lists from the template
+        if (selectedTemplateId) {
+            const template = getBoardTemplateById(selectedTemplateId);
+            if (template) {
+                // Calculate the starting list ID
+                const startListId = lists.length > 0 ? Math.max(...lists.map(l => l.id)) + 1 : 1;
+
+                // Create lists from template
+                const newLists = createListsFromTemplate(newBoardId, template, startListId);
+
+                // Add each list to the store
+                newLists.forEach(list => addList(list));
+            }
+        }
+
+        // Navigate to the new board
+        router.replace(`/boards/${newBoardId}`);
+    }, [
+        validateForm,
+        boards,
+        lists,
+        addBoard,
+        addList,
+        boardName,
+        boardDescription,
+        boardThumbnailPhoto,
+        selectedTemplateId,
+        router,
+    ]);
 
     return (
         <SafeAreaScreen edges={['bottom']} paddingTop={Platform.OS === 'android' ? 48 : 24}>
@@ -207,6 +312,33 @@ export const AddBoardScreen = () => {
                         ) : null}
                     </View>
 
+                    <View style={styles.templateSection}>
+                        <Text style={styles.label}>Template</Text>
+                        <Text style={[styles.templateHint, { color: theme.textMuted }]}>
+                            Choose a template to start with predefined lists
+                        </Text>
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            style={styles.templateScrollView}
+                            contentContainerStyle={styles.templateScrollContent}
+                        >
+                            <TemplateCard
+                                template={null}
+                                isSelected={selectedTemplateId === null}
+                                onSelect={() => handleTemplateSelect(null)}
+                            />
+                            {templates.map(template => (
+                                <TemplateCard
+                                    key={template.id}
+                                    template={template}
+                                    isSelected={selectedTemplateId === template.id}
+                                    onSelect={() => handleTemplateSelect(template.id)}
+                                />
+                            ))}
+                        </ScrollView>
+                    </View>
+
                     <View style={styles.buttonContainer}>
                         <Button title="Add Board" onPress={handleAddBoard} />
                     </View>
@@ -273,6 +405,51 @@ const styles = StyleSheet.create({
     errorText: {
         fontSize: 12,
         marginTop: 4,
+    },
+    templateSection: {
+        marginBottom: 16,
+    },
+    templateHint: {
+        fontSize: 12,
+        marginBottom: 12,
+    },
+    templateScrollView: {
+        marginHorizontal: -16,
+    },
+    templateScrollContent: {
+        paddingHorizontal: 16,
+        gap: 12,
+    },
+    templateCard: {
+        width: 160,
+        padding: 12,
+        borderRadius: 12,
+        minHeight: 100,
+    },
+    templateName: {
+        fontSize: 14,
+        fontWeight: '600',
+        marginBottom: 4,
+    },
+    templateDescription: {
+        fontSize: 12,
+        lineHeight: 16,
+        marginBottom: 8,
+    },
+    templateListsPreview: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        marginTop: 'auto',
+    },
+    listDot: {
+        width: 12,
+        height: 12,
+        borderRadius: 6,
+    },
+    moreListsText: {
+        fontSize: 10,
+        marginLeft: 2,
     },
     buttonContainer: {
         marginTop: 8,

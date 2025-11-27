@@ -1,14 +1,13 @@
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { spacing } from '@/src/constants/DesignTokens';
+import { useStore } from '@/src/store/useStore';
+import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { Alert, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { spacing } from '@/src/constants/DesignTokens';
-import { useStore } from '@/src/store/useStore';
-import { View } from '../ui/Themed';
-import { Backdrop } from './Backdrop';
 import { Button } from '../ui/Button/Button';
-
+import { View } from '../ui/Themed';
+import { BottomSheetModal } from './BottomSheetModal';
 type Props = {
     ref: React.RefObject<BottomSheetModal | null>;
     boardId: number;
@@ -54,13 +53,7 @@ export const BoardBottomSheetModal = ({ ref, boardId }: Props) => {
     };
 
     return (
-        <BottomSheetModal
-            backdropComponent={Backdrop}
-            enableDynamicSizing
-            enablePanDownToClose
-            ref={ref}
-            onDismiss={handleClose}
-        >
+        <BottomSheetModal ref={ref} onDismiss={handleClose}>
             <BottomSheetView style={[styles.contentContainer, { paddingBottom: bottom }]}>
                 <View style={styles.actionsContainer}>
                     <Button title="View Board" onPress={handleViewBoard} />

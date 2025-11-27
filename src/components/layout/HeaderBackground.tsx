@@ -5,6 +5,7 @@ export const HeaderBackground = () => {
     const theme = useTheme();
     return (
         <View
+            pointerEvents="none"
             style={{
                 backgroundColor: theme.headerBackground,
                 flex: 1,
