@@ -4,12 +4,12 @@
 
 - [Description](#description)
 - [Screenshots](#screenshots)
+- [Setup Instructions](#setup-instructions)
 - [Running the App](#running-the-app)
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Platform Support](#platform-support)
 - [Project Structure](#project-structure)
-- [Setup Instructions](#setup-instructions)
 - [Known Issues](#known-issues)
 - [Future Improvements](#future-improvements)
 - [Authors](#authors)
@@ -30,6 +30,65 @@ The application features full CRUD operations for boards, lists, and tasks, with
 | ![Edit board screen](docs/edit-board-screen.png) | ![Add list screen](docs/add-list-screen.png)       | ![Edit list screen](docs/edit-list-screen.png) |
 | **Add task screen**                              | **Edit task screen**                               |                                                |
 | ![Add task screen](docs/add-task-screen.png)     | ![Edit task screen](docs/edit-task-screen.png)     |                                                |
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js (v14 or higher, v18+ recommended)
+- npm or yarn
+- Expo CLI (optional but recommended): `npm install -g expo-cli`
+- Xcode (for iOS development, macOS only)
+- Android Studio (for Android development)
+
+### Environment Setup
+
+1. Install React Native dependencies
+    - Ensure Node.js and npm are installed: `node --version` and `npm --version`
+    - Install Expo CLI globally (optional): `npm install -g expo-cli`
+
+2. Configure development environment
+
+    **For iOS (macOS only):**
+    - Install Xcode from Mac App Store
+    - Install Command Line Tools: `xcode-select --install`
+    - Accept Xcode license: `sudo xcodebuild -license accept`
+
+    **For Android:**
+    - Install Android Studio from [developer.android.com](https://developer.android.com/studio)
+    - Open Android Studio and install Android SDK (API 33 or higher recommended)
+    - Configure ANDROID_HOME environment variable
+
+3. Set up emulators/simulators
+
+    **iOS Simulator (macOS):**
+    - Open Xcode > Preferences > Components
+    - Download desired iOS simulator versions
+
+    **Android Emulator:**
+    - Open Android Studio > AVD Manager
+    - Create a new virtual device (Pixel 5 recommended)
+    - Select a system image (API 33 or higher)
+    - Launch the emulator
+
+4. Clone/download the project and install dependencies
+
+    ```bash
+    cd T-488-MAPP-A1
+    npm install
+    ```
+
+5. Start the development server
+    ```bash
+    npm start
+    ```
+
+**Additional useful commands:**
+
+- `npm run lint` - Run ESLint to check code quality
+- `npm run lint:fix` - Automatically fix ESLint issues
+- `npm run format` - Format code with Prettier
+- `npm run format:check` - Check code formatting
 
 ## Running the App
 
@@ -298,65 +357,6 @@ const tasks = useStore(state => state.tasks);
 // Reset data
 const resetStore = useStore(state => state.resetStore);
 ```
-
-## Setup Instructions
-
-### Prerequisites
-
-- Node.js (v14 or higher, v18+ recommended)
-- npm or yarn
-- Expo CLI (optional but recommended): `npm install -g expo-cli`
-- Xcode (for iOS development, macOS only)
-- Android Studio (for Android development)
-
-### Environment Setup
-
-1. Install React Native dependencies
-    - Ensure Node.js and npm are installed: `node --version` and `npm --version`
-    - Install Expo CLI globally (optional): `npm install -g expo-cli`
-
-2. Configure development environment
-
-    **For iOS (macOS only):**
-    - Install Xcode from Mac App Store
-    - Install Command Line Tools: `xcode-select --install`
-    - Accept Xcode license: `sudo xcodebuild -license accept`
-
-    **For Android:**
-    - Install Android Studio from [developer.android.com](https://developer.android.com/studio)
-    - Open Android Studio and install Android SDK (API 33 or higher recommended)
-    - Configure ANDROID_HOME environment variable
-
-3. Set up emulators/simulators
-
-    **iOS Simulator (macOS):**
-    - Open Xcode > Preferences > Components
-    - Download desired iOS simulator versions
-
-    **Android Emulator:**
-    - Open Android Studio > AVD Manager
-    - Create a new virtual device (Pixel 5 recommended)
-    - Select a system image (API 33 or higher)
-    - Launch the emulator
-
-4. Clone/download the project and install dependencies
-
-    ```bash
-    cd T-488-MAPP-A1
-    npm install
-    ```
-
-5. Start the development server
-    ```bash
-    npm start
-    ```
-
-**Additional useful commands:**
-
-- `npm run lint` - Run ESLint to check code quality
-- `npm run lint:fix` - Automatically fix ESLint issues
-- `npm run format` - Format code with Prettier
-- `npm run format:check` - Check code formatting
 
 ## Known Issues
 
