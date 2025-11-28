@@ -291,7 +291,7 @@ T-488-MAPP-A1/
 │   │   └── data.ts                   # Board, List, Task interfaces
 │   └── utils/
 │       └── colors.ts                 # Color utilities
-├── .eslintrc.js                      # ESLint configuration
+├── eslint.config.js                  # ESLint configuration (flat config)
 ├── .prettierrc.js                    # Prettier configuration
 ├── app.json                          # Expo configuration
 ├── package.json                      # Dependencies and scripts
