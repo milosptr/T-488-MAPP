@@ -59,6 +59,7 @@ export interface DropContextValue {
     setDragOverlay: (state: DragOverlayState | null) => void;
     updateDragTranslation: (x: number, y: number) => void;
     providerOffset: DragVector;
+    measurementEpoch: number;
 }
 
 export interface DraggableProps extends DragCallbacks {

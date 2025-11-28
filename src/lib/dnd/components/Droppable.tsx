@@ -18,7 +18,7 @@ export const Droppable = ({
     droppableId,
     style,
     activeStyle,
-    collisionPadding = 24,
+    collisionPadding = 0,
     onDrop,
     onDragEnter,
     onDragLeave,
@@ -33,6 +33,7 @@ export const Droppable = ({
         updateDroppableLayout,
         activeDroppableId,
         activeDrag,
+        measurementEpoch,
     } = useDropContext();
 
     const handleMeasure = useCallback(() => {
@@ -70,6 +71,14 @@ export const Droppable = ({
     useEffect(() => {
         handleMeasure();
     }, [handleMeasure]);
+
+    // Re-measure when measurement epoch changes (triggered when drag starts)
+    // This ensures we have fresh screen coordinates even if the element has moved due to scrolling
+    useEffect(() => {
+        if (measurementEpoch > 0) {
+            handleMeasure();
+        }
+    }, [measurementEpoch, handleMeasure]);
 
     const handleLayout = useCallback(() => {
         handleMeasure();

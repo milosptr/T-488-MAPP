@@ -65,6 +65,7 @@ export const DropProvider = ({ children }: DropProviderProps) => {
     const [activeDrag, setActiveDrag] = useState<DragData | null>(null);
     const [dragOverlay, setDragOverlayState] = useState<DragOverlayState | null>(null);
     const [providerOffset, setProviderOffset] = useState<DragVector>({ x: 0, y: 0 });
+    const [measurementEpoch, setMeasurementEpoch] = useState(0);
 
     const overlayTranslationX = useSharedValue(0);
     const overlayTranslationY = useSharedValue(0);
@@ -168,6 +169,9 @@ export const DropProvider = ({ children }: DropProviderProps) => {
     const startDrag = useCallback((data: DragData) => {
         activeDragRef.current = data;
         setActiveDrag(data);
+        // Increment epoch to trigger all droppables to re-measure their positions
+        // This is needed because scroll containers may have moved droppables since last measurement
+        setMeasurementEpoch(prev => prev + 1);
     }, []);
 
     const endDrag = useCallback(() => {
@@ -199,6 +203,7 @@ export const DropProvider = ({ children }: DropProviderProps) => {
             setDragOverlay,
             updateDragTranslation,
             providerOffset,
+            measurementEpoch,
         }),
         [
             activeDrag,
@@ -212,6 +217,7 @@ export const DropProvider = ({ children }: DropProviderProps) => {
             setDragOverlay,
             updateDragTranslation,
             providerOffset,
+            measurementEpoch,
         ]
     );
 
