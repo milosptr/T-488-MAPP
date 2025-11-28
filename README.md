@@ -2,27 +2,28 @@
 
 ## Description
 
-Toodler is a Kanban-style task management application built with React Native and Expo. This mobile application enables users to organize their projects using boards, lists, and tasks following the Kanban methodology. Developed as part of the Umbrella agency's project management initiative, Toodler allows users to create multiple boards for different projects, organize tasks within customizable lists, and track progress by moving tasks between lists. The application demonstrates modern mobile development practices using Expo Router for file-based navigation and TypeScript for type safety.
+Toodler is a Kanban-style task management application built with React Native and Expo. This mobile application enables users to organize their projects using boards, lists, and tasks following the Kanban methodology. Developed as part of the Umbrella agency's project management initiative, Toodler allows users to create multiple boards for different projects, organize tasks within customizable lists, and track progress by moving tasks between lists.
+
+The application features full CRUD operations for boards, lists, and tasks, with additional enhancements including board templates for quick setup, persistent data storage, dark/light theme support, and a polished user interface with bottom sheet modals and form validation. Built with modern mobile development practices using Expo Router for file-based navigation, Zustand for state management, and TypeScript for type safety.
 
 ## Table of Contents
 
-- Installation
-- Features
-- Technologies Used
-- Platform Support
-- Project Structure
-- Setup Instructions
-- Running the App
-- Testing
-- Screenshots
-- Known Issues
-- Future Improvements
+- [Running the App](#running-the-app)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Platform Support](#platform-support)
+- [Project Structure](#project-structure)
+- [Setup Instructions](#setup-instructions)
+- [Screenshots](#screenshots)
+- [Known Issues](#known-issues)
+- [Future Improvements](#future-improvements)
+- [Authors](#authors)
 
 ## Running the App
 
 ### Navigate to project directory
 
-`cd MAPP`
+`cd T-488-MAPP-A1`
 
 ### Install dependencies
 
@@ -44,35 +45,46 @@ This will start the Expo development server. You can then:
 
 `npm run android` - Run directly on Android emulator
 
-`npm run web` - Run on web browser
-
 ## Features
 
-The application is designed to implement the following features based on assignment requirements:
+The application implements all required features based on assignment requirements:
 
-### Boards (25%)
+### Boards (25%) - Fully Implemented
 
 - View a list of all boards within the Board view
-- Create a new board with name, optional description, and thumbnail photo
-- Delete a board
+- Create a new board with name, description, and thumbnail photo (with image picker)
+- Delete a board (via bottom sheet menu with confirmation)
+- Edit existing boards (name, description, thumbnail)
 
-### Lists (25%)
+### Lists (25%) - Fully Implemented
 
-- View all lists associated with a specific board
-- Create a new list with name, optional color, and board reference
-- Delete a list
+- View all lists associated with a specific board (horizontal Kanban layout)
+- Create a new list with name, color selection (12 preset colors), and board reference
+- Delete a list (via bottom sheet menu with confirmation)
+- Edit existing lists (name, color)
 
-### Tasks (30%)
+### Tasks (30%) - Fully Implemented
 
 - View all tasks associated with a specific list
 - Create a new task with name, description, and completion status
-- Move tasks from one list to another (drag and drop functionality)
+- Move tasks from one list to another (via edit task screen dropdown)
+- Mark tasks as complete/incomplete with visual feedback
+- Edit existing tasks (name, description)
+- Delete tasks
 
-### Extras (20%)
+### Extras (20%) - Implemented
 
-- Additional features may be implemented beyond the core requirements for enhanced functionality and higher grades
+The following additional features have been implemented beyond the core requirements:
 
-**Current Status:** The project is in early development phase. Data structures and type definitions are established, Expo Router navigation is configured, and Zustand state management is implemented with initialize and reset capabilities.
+1. **Board Templates**: Users can choose from 5 predefined board templates when creating a new board (Everyday Kanban, Project Management, Study Planner, Trip Planner, Content Planning). Each template comes with pre-configured lists and colors for quick setup.
+
+2. **Persistent Data Storage**: All data is stored persistently using AsyncStorage with Zustand middleware. Data survives app restarts, providing a true mobile app experience.
+
+3. **Reset Store Functionality**: A reset button in the Boards screen header allows users to reset all data back to the initial sample state, useful for testing and demonstration.
+
+4. **Dark/Light Theme Support**: Full theme support with automatic system color scheme detection. All UI components adapt to the user's preferred appearance setting.
+
+5. **Edit Functionality**: Complete CRUD operations for all entities - boards, lists, and tasks can all be edited after creation, not just created and deleted.
 
 ## Technologies Used
 
@@ -81,13 +93,17 @@ The application is designed to implement the following features based on assignm
 - Expo Router (~6.0.15) - File-based routing and navigation
 - React Navigation (v7.1.8)
 - TypeScript (~5.9.2)
-- Zustand - Lightweight state management with initialize and reset capabilities
-- State Management: In-memory data management with Zustand store (initial data loaded from `data/data.ts`)
+- Zustand (v5.0.8) - Lightweight state management with persistence middleware
+- AsyncStorage (@react-native-async-storage/async-storage) - Persistent local storage
+- @gorhom/bottom-sheet (v5.2.6) - Gesture-driven bottom sheet modals
+- Expo Image Picker - Board thumbnail image selection
+- Expo Linear Gradient - Visual gradient effects
 - Expo Vector Icons (v15.0.3)
 - React (v19.1.0)
 - ESLint (v9.39.1) - Code quality and linting
 - Prettier (v3.6.2) - Code formatting
 - React Native Reanimated (v4.1.1) - Animations
+- React Native Gesture Handler - Touch gesture support
 - React Native Safe Area Context (v5.6.0) - Safe area handling
 
 ## Platform Support
@@ -106,6 +122,10 @@ The application is designed to implement the following features based on assignm
 - Testing Status: Early development phase - both platforms under active development
 - Known Platform-Specific Issues: None at this time
 
+#### As one great man once said:
+
+> Cross-platform is just a way of saying 'let's launch iOS and fix Android later.' [@adnansahinovich](https://x.com/adnansahinovich/status/1964569598898192440)
+
 ### Platform-Specific Features
 
 No platform-specific features at this time. The application uses React Native's cross-platform capabilities to provide a consistent experience across both iOS and Android.
@@ -113,50 +133,111 @@ No platform-specific features at this time. The application uses React Native's 
 ## Project Structure
 
 ```
-MAPP/
-├── app/                          # Expo Router screens and navigation
-│   ├── (tabs)/                   # Tab-based navigation screens
-│   │   ├── _layout.tsx          # Tab layout configuration
-│   │   ├── index.tsx            # Boards tab screen
-│   │   └── settings.tsx         # Settings tab screen
-│   ├── _layout.tsx              # Root layout (with store initialization)
-│   └── +not-found.tsx           # 404 error screen
-├── assets/                       # Static assets (images, fonts)
-│   ├── fonts/                   # Custom fonts
-│   └── images/                  # App icons and images
-├── src/                          # Source code
-│   ├── components/              # Reusable React components
-│   │   ├── EditScreenInfo.tsx
-│   │   ├── ExternalLink.tsx
-│   │   ├── StyledText.tsx
-│   │   └── Themed.tsx
-│   ├── hooks/                   # Custom React hooks
+T-488-MAPP-A1/
+├── app/                              # Expo Router navigation
+│   ├── (app)/                        # Main app group
+│   │   ├── boards/
+│   │   │   └── [id].tsx              # Single board view (dynamic route)
+│   │   ├── _layout.tsx               # App stack layout
+│   │   └── index.tsx                 # Boards screen (home)
+│   ├── modals/                       # Modal screens
+│   │   ├── add-board.tsx
+│   │   ├── add-list.tsx
+│   │   ├── add-task.tsx
+│   │   ├── edit-board.tsx
+│   │   ├── edit-list.tsx
+│   │   └── edit-task.tsx
+│   ├── _layout.tsx                   # Root layout (providers, store hydration)
+│   └── +not-found.tsx                # 404 error screen
+├── assets/                           # Static assets
+│   ├── fonts/
+│   │   └── SpaceMono-Regular.ttf
+│   └── images/
+│       ├── adaptive-icon.png
+│       ├── favicon.png
+│       ├── icon.png
+│       └── splash-icon.png
+├── data/
+│   └── data.ts                       # Pre-populated sample data
+├── src/                              # Source code
+│   ├── components/                   # Reusable React components
+│   │   ├── bottom-sheet/             # Bottom sheet modals
+│   │   │   ├── Backdrop.tsx
+│   │   │   ├── BoardBottomSheetModal.tsx
+│   │   │   ├── BottomSheetModal.tsx
+│   │   │   ├── EditListBottomSheetModal.tsx
+│   │   │   └── index.ts
+│   │   ├── cards/                    # Card components
+│   │   │   ├── BoardCard.tsx
+│   │   │   ├── BoardColumn.tsx
+│   │   │   ├── TaskCard.tsx
+│   │   │   └── index.ts
+│   │   ├── layout/                   # Layout components
+│   │   │   ├── HeaderBackground.tsx
+│   │   │   ├── SafeAreaScreen.tsx
+│   │   │   ├── ScreenHeader.tsx
+│   │   │   └── index.ts
+│   │   ├── ui/                       # UI primitives
+│   │   │   ├── Button/
+│   │   │   ├── ColorPicker/
+│   │   │   ├── GlassView/
+│   │   │   ├── ModalCloseButton/
+│   │   │   ├── TextInput/
+│   │   │   ├── Themed.tsx
+│   │   │   └── index.ts
+│   │   └── index.ts
+│   ├── constants/
+│   │   ├── Colors.ts                 # Color definitions
+│   │   └── DesignTokens.ts           # Spacing, border radius
+│   ├── hooks/
 │   │   ├── useColorScheme.ts
-│   ├── constants/               # App-wide constants
-│   │   └── Colors.ts            # Color definitions
-│   ├── store/                   # State management
-│   │   └── useStore.ts          # Zustand store with boards, lists, tasks
-│   └── types/                   # TypeScript type definitions
-│       └── data.ts              # Data model interfaces (Board, List, Task)
-├── data/                         # Data layer
-│   └── data.ts                  # Pre-populated sample data
-├── app.json                      # Expo configuration
-├── package.json                  # Dependencies and scripts
-├── tsconfig.json                # TypeScript configuration
-├── .eslintrc.js                 # ESLint configuration
-└── .prettierrc.js               # Prettier configuration
+│   │   └── useTheme.ts
+│   ├── screens/                      # Screen components
+│   │   ├── boards/
+│   │   │   ├── AddBoardScreen.tsx
+│   │   │   ├── BoardsScreen.tsx
+│   │   │   ├── EditBoardScreen.tsx
+│   │   │   ├── SingleBoardScreen.tsx
+│   │   │   └── index.ts
+│   │   ├── common/
+│   │   │   ├── NotFoundScreen.tsx
+│   │   │   └── index.ts
+│   │   ├── lists/
+│   │   │   ├── AddListScreen.tsx
+│   │   │   ├── EditListScreen.tsx
+│   │   │   └── index.ts
+│   │   ├── tasks/
+│   │   │   ├── AddTaskScreen.tsx
+│   │   │   ├── EditTaskScreen.tsx
+│   │   │   └── index.ts
+│   │   └── index.ts
+│   ├── store/
+│   │   └── useStore.ts               # Zustand store with persistence
+│   ├── templates/
+│   │   ├── template.ts               # 5 predefined board templates
+│   │   └── index.ts
+│   ├── types/
+│   │   └── data.ts                   # Board, List, Task interfaces
+│   └── utils/
+│       └── colors.ts                 # Color utilities
+├── .eslintrc.js                      # ESLint configuration
+├── .prettierrc.js                    # Prettier configuration
+├── app.json                          # Expo configuration
+├── package.json                      # Dependencies and scripts
+└── tsconfig.json                     # TypeScript configuration
 ```
 
 **Key Directory Explanations:**
 
-- `/app` - Contains all screens using Expo Router's file-based routing system
-- `/src` - Main source code directory containing components, hooks, state management, constants, and types
-- `/src/components` - Reusable UI components used across multiple screens
-- `/src/hooks` - Custom React hooks (e.g., useColorScheme)
-- `/src/store` - Zustand state management store with initialize and reset functionality
-- `/src/constants` - Global constants like color schemes
-- `/src/types` - TypeScript interfaces and type definitions for type safety
-- `/data` - Pre-populated data that serves as the in-memory database (loaded into store on app startup)
+- `/app` - Expo Router file-based routing with modal presentation and dynamic routes
+- `/src/components` - Reusable UI components organized by category (bottom-sheet, cards, layout, ui)
+- `/src/screens` - Screen components separated from routing, organized by feature (boards, lists, tasks)
+- `/src/hooks` - Custom React hooks for theme and color scheme
+- `/src/store` - Zustand store with AsyncStorage persistence
+- `/src/templates` - Board template definitions for quick setup
+- `/src/constants` - Design tokens and color definitions
+- `/src/types` - TypeScript interfaces for type safety
+- `/data` - Pre-populated sample data loaded on first app launch
 
 **Data Models (defined in `src/types/data.ts`):**
 
@@ -184,12 +265,13 @@ MAPP/
 
 **State Management (Zustand Store - `src/store/useStore.ts`):**
 
-The application uses Zustand for lightweight state management with the following features:
+The application uses Zustand for lightweight state management with AsyncStorage persistence:
 
 - **Store State:** Contains boards, lists, and tasks arrays
-- **Initialize Pattern:** Store starts empty and loads data on app startup via `initializeStore()` called in `app/_layout.tsx`
+- **Persistent Storage:** Data is automatically saved to AsyncStorage and restored on app startup
+- **Hydration:** Store handles hydration state to ensure data is loaded before rendering
 - **Reset Functionality:** `resetStore()` method resets all data back to initial state from `data/data.ts`
-- **Future-Ready:** Architecture supports extending to AsyncStorage, API integration, or other data sources
+- **Full CRUD Actions:** addBoard, updateBoard, deleteBoard, addList, updateList, deleteList, addTask, updateTask, deleteTask, moveTask
 
 **Usage Example:**
 
@@ -248,7 +330,7 @@ const resetStore = useStore(state => state.resetStore);
 4. Clone/download the project and install dependencies
 
     ```bash
-    cd MAPP
+    cd T-488-MAPP-A1
     npm install
     ```
 
@@ -264,81 +346,55 @@ const resetStore = useStore(state => state.resetStore);
 - `npm run format` - Format code with Prettier
 - `npm run format:check` - Check code formatting
 
-## Testing
-
-Testing infrastructure will be added as features are implemented. Students are encouraged to write unit tests for components and integration tests for data operations as the application develops.
-
 ## Screenshots
 
-Screenshots will be added as features are implemented during development.
-
-_Placeholder for future screenshots showing:_
-
-- Boards list view
-- Board detail view with lists
-- Task list view
-- Create board modal
-- Create list modal
-- Create task modal
-- Task movement between lists
+|                                                  |                                                    |                                                |
+| ------------------------------------------------ | -------------------------------------------------- | ---------------------------------------------- |
+| **Boards list view**                             | **Board detail view with lists**                   | **Add board screen**                           |
+| ![Boards list view](docs/boards-screen.png)      | ![Board detail view](docs/single-board-screen.png) | ![Add board screen](docs/add-board-screen.png) |
+| **Edit board screen**                            | **Add list screen**                                | **Edit list screen**                           |
+| ![Edit board screen](docs/edit-board-screen.png) | ![Add list screen](docs/add-list-screen.png)       | ![Edit list screen](docs/edit-list-screen.png) |
+| **Add task screen**                              | **Edit task screen**                               |                                                |
+| ![Add task screen](docs/add-task-screen.png)     | ![Edit task screen](docs/edit-task-screen.png)     |                                                |
 
 ## Known Issues
 
 No known issues currently.
 
-**Important Note:**
+**Note on Data Persistence:**
 
-- **Data Persistence:** All data is stored in memory using Zustand state management. The store is initialized with pre-populated data from `data/data.ts` when the app starts (via `initializeStore()` in `app/_layout.tsx`). Any changes made during runtime (creating, updating, or deleting boards, lists, or tasks) will be lost when the application restarts. This is intentional for the current assignment phase as specified in the requirements. Each time the app starts, it reloads the original data from the data file. The `resetStore()` function can also be used to reset data back to initial state without restarting the app.
+- **Persistent Storage:** All data is stored persistently using AsyncStorage with Zustand middleware. Changes made during runtime (creating, updating, or deleting boards, lists, or tasks) are automatically saved and will persist across app restarts.
+- **Initial Data:** On first launch, the app loads pre-populated sample data from `data/data.ts` to demonstrate functionality.
+- **Reset Functionality:** The `resetStore()` function (accessible via the reset button in the Boards screen header) can be used to reset all data back to the initial sample state at any time.
 
 ## Future Improvements
 
-### Core Feature Implementation
-
-- Complete CRUD operations for Boards (Create, Read, Update, Delete)
-- Complete CRUD operations for Lists
-- Complete CRUD operations for Tasks
-- Implement drag-and-drop functionality for moving tasks between lists
-- Add edit functionality for boards, lists, and tasks
-
-### Data Persistence
-
-- Implement AsyncStorage for persistent local storage
-- Add data export/import functionality (JSON format)
-- Consider backend API integration for cloud synchronization
-
 ### User Experience Enhancements
 
-- Add animations and smooth transitions
+- Implement drag-and-drop functionality for moving tasks between lists (currently done via edit screen)
+- Add animations and smooth transitions between screens
 - Implement search and filter functionality for boards and tasks
-- Enhance dark mode support (currently basic theme support exists)
-- Improve accessibility features (screen reader support, larger touch targets)
 - Add task sorting options (by name, date, priority)
 
-### Additional Features (Extras)
+### Additional Features
 
 - Task due dates and reminders with push notifications
 - Task priority levels (high, medium, low)
 - User authentication and multiple user profiles
 - Board sharing and collaboration features
-- Activity history and audit log
-- Task comments and discussions
-- File attachments to tasks
-- Board templates for common project types
+- Data export/import functionality (JSON format)
+- Backend API integration for cloud synchronization
 - Calendar integration
 - Analytics and productivity insights
-- Offline mode with sync when online
 
-### Code Quality and Performance
+---
 
-- Add comprehensive test coverage (unit and integration tests)
-- Implement CI/CD pipeline
-- Add performance monitoring
-- Optimize rendering for large datasets
-- Implement virtualized lists for better performance
-- Add error boundaries for better error handling
+## Authors
+
+- Milos Petrovic
+- Nikulás Anthony Swain
+- Sunna Einarsdóttir
 
 ---
 
 **Project Assignment:** This project is developed as part of an academic assignment for the Umbrella agency project management initiative.
-
-**Last Updated:** November 2025
