@@ -57,7 +57,15 @@ const useStoreBase = create<StoreState>()(
             },
 
             deleteBoard: (id: number) => {
-                set({ boards: get().boards.filter(board => board.id !== id) });
+                const listIdsToDelete = get()
+                    .lists.filter(list => list.boardId === id)
+                    .map(list => list.id);
+
+                set({
+                    boards: get().boards.filter(board => board.id !== id),
+                    lists: get().lists.filter(list => list.boardId !== id),
+                    tasks: get().tasks.filter(task => !listIdsToDelete.includes(task.listId)),
+                });
             },
 
             addList: (list: List) => {
@@ -65,7 +73,10 @@ const useStoreBase = create<StoreState>()(
             },
 
             deleteList: (id: number) => {
-                set({ lists: get().lists.filter(list => list.id !== id) });
+                set({
+                    lists: get().lists.filter(list => list.id !== id),
+                    tasks: get().tasks.filter(task => task.listId !== id),
+                });
             },
 
             updateList: (updatedList: List) => {
